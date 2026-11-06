@@ -84,6 +84,7 @@ const QUESTIONS = [
 const RESULTS = {
   A: {
     name: "都柏林 · 文学旧宅",
+    short: "都柏林",
     tag: "敏感、内省、旧时代的诗意",
     coords: "53.3498° N · 6.2603° W",
     accent: "#8fbfa4",
@@ -96,6 +97,7 @@ const RESULTS = {
   },
   B: {
     name: "布拉格 · 荒诞酒馆",
+    short: "布拉格",
     tag: "讽刺、幽默、看透荒诞",
     coords: "50.0755° N · 14.4378° E",
     accent: "#e0b25a",
@@ -108,6 +110,7 @@ const RESULTS = {
   },
   C: {
     name: "巴黎 · 左岸咖啡馆",
+    short: "巴黎",
     tag: "热血、幻灭、时代现场",
     coords: "48.8566° N · 2.3522° E",
     accent: "#e68a72",
@@ -120,6 +123,7 @@ const RESULTS = {
   },
   D: {
     name: "中国西北 · 平凡的土地",
+    short: "中国西北",
     tag: "务实、苦难、真实的人间",
     coords: "36.5853° N · 109.4900° E",
     accent: "#d99a5b",
@@ -132,6 +136,7 @@ const RESULTS = {
   },
   E: {
     name: "牛津 · 中土起点",
+    short: "牛津",
     tag: "想象、造世、雾中森林",
     coords: "51.7520° N · 1.2577° W",
     accent: "#a9a0e6",
@@ -154,6 +159,7 @@ const screens = {
 
 const els = {
   start: document.getElementById("start"),
+  resume: document.getElementById("resume"),
   back: document.getElementById("back"),
   restart: document.getElementById("restart"),
   share: document.getElementById("share"),
@@ -168,12 +174,24 @@ const els = {
   resultTag: document.getElementById("resultTag"),
   resultCoords: document.getElementById("resultCoords"),
   resultCopy: document.getElementById("resultCopy"),
+  breakdown: document.getElementById("breakdown"),
   tieNote: document.getElementById("tieNote"),
+  poster: document.getElementById("poster"),
+  posterModal: document.getElementById("posterModal"),
+  posterBackdrop: document.getElementById("posterBackdrop"),
+  posterDialog: document.querySelector(".poster-dialog"),
+  posterImage: document.getElementById("posterImage"),
+  posterDownload: document.getElementById("posterDownload"),
+  posterClose: document.getElementById("posterClose"),
+  posterCancel: document.getElementById("posterCancel"),
   toast: document.getElementById("toast")
 };
 
 const CHECK_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>';
+
+const SITE_URL = "https://tapio-zs.github.io/Literary-Holy-Land-Test/";
+const STORAGE_KEY = "lhl-progress-v1";
 
 let index = 0;
 let answers = new Array(QUESTIONS.length).fill(null);
@@ -181,6 +199,8 @@ let locked = false;
 let advanceTimer = null;
 let toastTimer = null;
 let lastLetter = "A";
+let resumeState = null;
+let lastFocused = null;
 
 function setAccent(theme) {
   const root = document.documentElement.style;
@@ -246,6 +266,17 @@ function renderQuestion() {
   els.progress.setAttribute("aria-valuenow", String(index + 1));
   els.progress.setAttribute("aria-valuemax", String(total));
   els.back.disabled = index === 0;
+
+  saveProgress();
+  focusHeading(els.qText);
+}
+
+function focusHeading(element) {
+  try {
+    element.focus({ preventScroll: true });
+  } catch (error) {
+    element.focus();
+  }
 }
 
 function choose(letter) {
@@ -256,6 +287,8 @@ function choose(letter) {
   els.options.querySelectorAll(".option").forEach((button) => {
     button.classList.toggle("is-selected", button.dataset.letter === letter);
   });
+
+  saveProgress();
 
   window.clearTimeout(advanceTimer);
   advanceTimer = window.setTimeout(() => {
@@ -277,28 +310,81 @@ function goBack() {
   renderQuestion();
 }
 
-function computeResult() {
+function computeCounts() {
   const counts = { A: 0, B: 0, C: 0, D: 0, E: 0 };
   answers.forEach((letter) => {
     if (letter && Object.prototype.hasOwnProperty.call(counts, letter)) {
       counts[letter] += 1;
     }
   });
+  return counts;
+}
 
+function computeResult() {
+  const counts = computeCounts();
   const max = Math.max(...Object.values(counts));
   const tied = Object.keys(counts).filter((letter) => counts[letter] === max);
   const lastAnswer = answers[QUESTIONS.length - 1];
 
   if (tied.length > 1) {
     const letter = tied.includes(lastAnswer) ? lastAnswer : tied[0];
-    return { letter, tie: true };
+    return { letter, tie: true, counts };
   }
 
-  return { letter: tied[0], tie: false };
+  return { letter: tied[0], tie: false, counts };
 }
 
-function showResult() {
-  const { letter, tie } = computeResult();
+function renderBreakdown(counts, letter) {
+  const total = QUESTIONS.length;
+  const rows = [];
+
+  els.breakdown.innerHTML = "";
+
+  const head = document.createElement("div");
+  head.className = "breakdown-head";
+  const headLeft = document.createElement("span");
+  headLeft.textContent = "坐标分布";
+  const headRight = document.createElement("span");
+  headRight.textContent = "How you scored";
+  head.append(headLeft, headRight);
+  els.breakdown.appendChild(head);
+
+  ["A", "B", "C", "D", "E"].forEach((key) => {
+    const count = counts[key] || 0;
+    const row = document.createElement("div");
+    row.className = "bd-row" + (key === letter ? " is-mine" : "");
+
+    const letterEl = document.createElement("span");
+    letterEl.className = "bd-letter";
+    letterEl.textContent = key;
+
+    const nameEl = document.createElement("span");
+    nameEl.className = "bd-name";
+    nameEl.textContent = RESULTS[key].short;
+
+    const track = document.createElement("span");
+    track.className = "bd-track";
+    const bar = document.createElement("i");
+    track.appendChild(bar);
+
+    const countEl = document.createElement("span");
+    countEl.className = "bd-count";
+    countEl.textContent = String(count);
+
+    row.append(letterEl, nameEl, track, countEl);
+    els.breakdown.appendChild(row);
+    rows.push({ bar, percent: (count / total) * 100 });
+  });
+
+  window.requestAnimationFrame(() => {
+    rows.forEach(({ bar, percent }) => {
+      bar.style.width = `${percent}%`;
+    });
+  });
+}
+
+function showResult(options = {}) {
+  const { letter, tie, counts } = computeResult();
   const result = RESULTS[letter];
   lastLetter = letter;
 
@@ -316,7 +402,123 @@ function showResult() {
   });
   els.tieNote.hidden = !tie;
 
+  renderBreakdown(counts, letter);
   showScreen("result");
+
+  if (!options.skipHash) updateHash();
+  saveProgress(true);
+  els.resume.hidden = true;
+  focusHeading(els.resultName);
+}
+
+function updateHash() {
+  if (!answers.every(Boolean)) return;
+  const code = answers.join("");
+  try {
+    window.history.replaceState(
+      null,
+      "",
+      window.location.pathname + window.location.search + `#a=${code}`
+    );
+  } catch (error) {
+    /* file:// 等环境可能禁止，忽略 */
+  }
+}
+
+function clearHash() {
+  try {
+    window.history.replaceState(null, "", window.location.pathname + window.location.search);
+  } catch (error) {
+    /* ignore */
+  }
+}
+
+function saveProgress(done = false) {
+  try {
+    const answered = answers.filter(Boolean).length;
+    if (answered === 0) {
+      window.localStorage.removeItem(STORAGE_KEY);
+      return;
+    }
+    window.localStorage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({ answers, index, done })
+    );
+  } catch (error) {
+    /* 隐私模式等场景忽略 */
+  }
+}
+
+function readProgress() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || !Array.isArray(data.answers)) return null;
+    const valid =
+      data.answers.length === QUESTIONS.length &&
+      data.answers.every((letter) => letter === null || /^[A-E]$/.test(letter));
+    if (!valid) return null;
+
+    const answered = data.answers.filter(Boolean).length;
+    if (answered === 0) return null;
+
+    return {
+      answers: data.answers,
+      index: Number.isInteger(data.index) ? data.index : 0,
+      done: Boolean(data.done),
+      answered
+    };
+  } catch (error) {
+    return null;
+  }
+}
+
+function refreshResumeButton() {
+  resumeState = readProgress();
+  if (!resumeState) {
+    els.resume.hidden = true;
+    return;
+  }
+  els.resume.hidden = false;
+  const label = els.resume.querySelector("span");
+  label.textContent = resumeState.done
+    ? "查看上次结果"
+    : `继续上次（${resumeState.answered}/${QUESTIONS.length}）`;
+}
+
+function resumeTest() {
+  if (!resumeState) return;
+
+  answers = resumeState.answers.slice();
+
+  if (resumeState.done) {
+    index = QUESTIONS.length - 1;
+    showResult();
+    return;
+  }
+
+  const firstUnanswered = answers.findIndex((letter) => !letter);
+  const target = firstUnanswered === -1 ? resumeState.index : firstUnanswered;
+  index = Math.max(0, Math.min(target, QUESTIONS.length - 1));
+  locked = false;
+  showScreen("quiz");
+  renderQuestion();
+  showToast("已恢复上次进度");
+}
+
+function startTest() {
+  window.clearTimeout(advanceTimer);
+  index = 0;
+  answers = new Array(QUESTIONS.length).fill(null);
+  locked = false;
+  resumeState = null;
+  els.resume.hidden = true;
+  resetAccent();
+  clearHash();
+  saveProgress();
+  showScreen("quiz");
+  renderQuestion();
 }
 
 function restart() {
@@ -324,9 +526,13 @@ function restart() {
   index = 0;
   answers = new Array(QUESTIONS.length).fill(null);
   locked = false;
+  resumeState = null;
+  els.resume.hidden = true;
   resetAccent();
-  renderQuestion();
+  clearHash();
+  saveProgress();
   showScreen("quiz");
+  renderQuestion();
 }
 
 function showToast(message) {
@@ -378,6 +584,334 @@ async function shareResult() {
   }
 }
 
+/* ---------- 结果海报 ---------- */
+
+const POSTER_SERIF =
+  '"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","SimSun",Georgia,serif';
+const POSTER_DISPLAY =
+  '"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif';
+const POSTER_SANS = POSTER_DISPLAY;
+
+function hexToRgb(hex) {
+  const value = hex.replace("#", "");
+  const full =
+    value.length === 3
+      ? value
+          .split("")
+          .map((char) => char + char)
+          .join("")
+      : value;
+  return {
+    r: parseInt(full.slice(0, 2), 16),
+    g: parseInt(full.slice(2, 4), 16),
+    b: parseInt(full.slice(4, 6), 16)
+  };
+}
+
+function rgba(hex, alpha) {
+  const { r, g, b } = hexToRgb(hex);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+  const r = Math.min(radius, width / 2, height / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + width, y, x + width, y + height, r);
+  ctx.arcTo(x + width, y + height, x, y + height, r);
+  ctx.arcTo(x, y + height, x, y, r);
+  ctx.arcTo(x, y, x + width, y, r);
+  ctx.closePath();
+}
+
+function wrapCanvasText(ctx, text, maxWidth) {
+  const lines = [];
+  let line = "";
+
+  for (const char of text) {
+    if (char === "\n") {
+      lines.push(line);
+      line = "";
+      continue;
+    }
+    const candidate = line + char;
+    if (line && ctx.measureText(candidate).width > maxWidth) {
+      lines.push(line);
+      line = char;
+    } else {
+      line = candidate;
+    }
+  }
+
+  if (line) lines.push(line);
+  return lines;
+}
+
+function drawPosterStamp(ctx, cx, cy, radius, letter, accent) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate((-7 * Math.PI) / 180);
+
+  ctx.strokeStyle = accent;
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.globalAlpha = 0.5;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(0, 0, radius - 11, 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  for (let i = 0; i < 24; i += 1) {
+    const angle = (i / 24) * Math.PI * 2;
+    ctx.globalAlpha = 0.35;
+    ctx.strokeStyle = accent;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(Math.cos(angle) * (radius + 9), Math.sin(angle) * (radius + 9));
+    ctx.lineTo(Math.cos(angle) * (radius + 15), Math.sin(angle) * (radius + 15));
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = accent;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.font = `600 ${Math.round(radius * 1.15)}px ${POSTER_SERIF}`;
+  ctx.fillText(letter, 0, -8);
+  ctx.font = `600 15px ${POSTER_SANS}`;
+  ctx.fillText("HOLY LAND", 0, radius * 0.62);
+
+  ctx.restore();
+  ctx.textBaseline = "alphabetic";
+}
+
+function drawPosterQr(ctx, url, x, y, size) {
+  ctx.fillStyle = "#f4ecdf";
+  drawRoundedRect(ctx, x, y, size, size, 14);
+  ctx.fill();
+
+  if (typeof qrcode !== "function") return;
+
+  const qr = qrcode(0, "M");
+  qr.addData(url);
+  qr.make();
+
+  const count = qr.getModuleCount();
+  const padding = 14;
+  const cell = Math.floor((size - padding * 2) / count);
+  const offset = x + padding + Math.floor((size - padding * 2 - cell * count) / 2);
+  const offsetY = y + padding + Math.floor((size - padding * 2 - cell * count) / 2);
+
+  ctx.fillStyle = "#0b0a09";
+  for (let row = 0; row < count; row += 1) {
+    for (let col = 0; col < count; col += 1) {
+      if (qr.isDark(row, col)) {
+        ctx.fillRect(offset + col * cell, offsetY + row * cell, cell, cell);
+      }
+    }
+  }
+}
+
+function buildPoster(letter) {
+  const result = RESULTS[letter];
+  const counts = computeCounts();
+  const accent = result.accent;
+  const width = 1080;
+  const height = 1440;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+
+  ctx.fillStyle = "#0b0a09";
+  ctx.fillRect(0, 0, width, height);
+
+  const addGlow = (x, y, radius, color) => {
+    const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
+    gradient.addColorStop(0, color);
+    gradient.addColorStop(1, "rgba(0, 0, 0, 0)");
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+  };
+
+  addGlow(880, 150, 640, rgba(accent, 0.34));
+  addGlow(110, 1340, 660, "rgba(148, 52, 40, 0.32)");
+  addGlow(520, 760, 520, rgba(accent, 0.1));
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.035)";
+  for (let i = 0; i < 3200; i += 1) {
+    ctx.fillRect(Math.random() * width, Math.random() * height, 1, 1);
+  }
+
+  ctx.strokeStyle = rgba(accent, 0.32);
+  ctx.lineWidth = 2;
+  ctx.strokeRect(54, 54, width - 108, height - 108);
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = accent;
+  ctx.font = `600 24px ${POSTER_SANS}`;
+  ctx.fillText("LITERARY PILGRIMAGE · VOL.08", 96, 132);
+
+  ctx.textAlign = "right";
+  ctx.fillStyle = "rgba(244, 236, 223, 0.55)";
+  ctx.font = `400 20px ${POSTER_SANS}`;
+  ctx.fillText("2026", 984, 132);
+
+  drawPosterStamp(ctx, width / 2, 332, 104, letter, accent);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#f4ecdf";
+  ctx.font = `700 76px ${POSTER_DISPLAY}`;
+  const nameLines = wrapCanvasText(ctx, result.name, 860);
+  let y = 548;
+  nameLines.forEach((line) => {
+    ctx.fillText(line, width / 2, y);
+    y += 92;
+  });
+
+  y += 4;
+  ctx.fillStyle = accent;
+  ctx.font = `500 26px ${POSTER_SANS}`;
+  ctx.fillText(result.tag, width / 2, y);
+
+  y += 46;
+  ctx.fillStyle = "rgba(139, 129, 115, 1)";
+  ctx.font = `400 20px ${POSTER_SANS}`;
+  ctx.fillText(result.coords, width / 2, y);
+
+  y += 48;
+  ctx.strokeStyle = "rgba(244, 236, 223, 0.14)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(200, y);
+  ctx.lineTo(880, y);
+  ctx.stroke();
+
+  y += 62;
+  ctx.fillStyle = "rgba(216, 205, 189, 0.95)";
+  ctx.font = `400 29px ${POSTER_SERIF}`;
+  const paragraphLines = wrapCanvasText(ctx, result.paragraphs[0], 820);
+  paragraphLines.forEach((line) => {
+    ctx.fillText(line, width / 2, y);
+    y += 50;
+  });
+
+  y += 40;
+  ctx.textAlign = "left";
+  ctx.fillStyle = "rgba(139, 129, 115, 1)";
+  ctx.font = `500 18px ${POSTER_SANS}`;
+  ctx.fillText("坐标分布 / HOW YOU SCORED", 130, y);
+
+  y += 48;
+  ["A", "B", "C", "D", "E"].forEach((key, i) => {
+    const x = 130 + i * 172;
+    const active = key === letter;
+    ctx.fillStyle = active ? accent : "rgba(244, 236, 223, 0.4)";
+    ctx.font = `700 34px ${POSTER_DISPLAY}`;
+    ctx.fillText(key, x, y);
+    ctx.fillStyle = active ? accent : "rgba(244, 236, 223, 0.45)";
+    ctx.font = `400 18px ${POSTER_SANS}`;
+    ctx.fillText(String(counts[key] || 0), x + 30, y);
+    ctx.fillStyle = active ? accent : "rgba(244, 236, 223, 0.16)";
+    ctx.fillRect(x, y + 14, 92, 2);
+  });
+
+  const qrUrl = answers.every(Boolean) ? `${SITE_URL}#a=${answers.join("")}` : SITE_URL;
+  const qrSize = 168;
+  drawPosterQr(ctx, qrUrl, 96, 1176, qrSize);
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#f4ecdf";
+  ctx.font = `600 24px ${POSTER_SANS}`;
+  ctx.fillText("扫码测出你的文学圣地", 300, 1222);
+  ctx.fillStyle = "rgba(139, 129, 115, 1)";
+  ctx.font = `400 17px ${POSTER_SANS}`;
+  ctx.fillText("tapio-zs.github.io/Literary-Holy-Land-Test", 300, 1262);
+  ctx.fillStyle = "rgba(244, 236, 223, 0.55)";
+  ctx.font = `400 17px ${POSTER_SANS}`;
+  ctx.fillText("8 道题 · 约 2 分钟 · 凭直觉作答", 300, 1298);
+
+  ctx.textAlign = "center";
+  ctx.fillStyle = "rgba(244, 236, 223, 0.34)";
+  ctx.font = `400 16px ${POSTER_SANS}`;
+  ctx.fillText("LITERARY HOLY LAND TEST · TAPIO 2026", width / 2, 1370);
+
+  return canvas.toDataURL("image/png");
+}
+
+function openPoster() {
+  const result = RESULTS[lastLetter];
+  const dataUrl = buildPoster(lastLetter);
+
+  lastFocused = document.activeElement;
+  els.posterImage.src = dataUrl;
+  els.posterImage.alt = `${result.name}——${result.tag}`;
+  els.posterDownload.href = dataUrl;
+  els.posterDownload.download = `文学圣地-${result.short}.png`;
+  els.posterModal.hidden = false;
+  document.body.classList.add("poster-open");
+  els.posterClose.focus();
+}
+
+function closePoster() {
+  els.posterModal.hidden = true;
+  document.body.classList.remove("poster-open");
+  if (lastFocused) {
+    try {
+      lastFocused.focus({ preventScroll: true });
+    } catch (error) {
+      lastFocused.focus();
+    }
+  }
+}
+
+function handlePosterKeydown(event) {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closePoster();
+    return;
+  }
+  if (event.key !== "Tab") return;
+
+  const focusable = Array.from(
+    els.posterDialog.querySelectorAll('a[href], button:not([disabled])')
+  ).filter((element) => element.offsetParent !== null);
+  if (focusable.length === 0) return;
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function readHash() {
+  const match = window.location.hash.match(/a=([A-Ea-e]{8})/);
+  if (!match) return null;
+  return match[1].toUpperCase().split("");
+}
+
+function initFromLocation() {
+  const hashAnswers = readHash();
+  if (hashAnswers) {
+    answers = hashAnswers;
+    index = QUESTIONS.length - 1;
+    showResult({ skipHash: true });
+    return;
+  }
+  refreshResumeButton();
+}
+
 const cursorGlow = document.getElementById("cursorGlow");
 let pointerX = 0;
 let pointerY = 0;
@@ -401,14 +935,24 @@ window.addEventListener(
   { passive: true }
 );
 
-els.start.addEventListener("click", () => {
-  showScreen("quiz");
-  renderQuestion();
-});
-
+els.start.addEventListener("click", startTest);
+els.resume.addEventListener("click", resumeTest);
 els.back.addEventListener("click", goBack);
 els.restart.addEventListener("click", restart);
 els.share.addEventListener("click", shareResult);
+
+els.poster.addEventListener("click", () => {
+  try {
+    openPoster();
+  } catch (error) {
+    showToast("海报生成失败，请稍后再试");
+  }
+});
+
+els.posterClose.addEventListener("click", closePoster);
+els.posterCancel.addEventListener("click", closePoster);
+els.posterBackdrop.addEventListener("click", closePoster);
+els.posterModal.addEventListener("keydown", handlePosterKeydown);
 
 document.addEventListener("keydown", (event) => {
   if (!screens.quiz.classList.contains("is-active")) return;
@@ -425,3 +969,5 @@ document.addEventListener("keydown", (event) => {
     goBack();
   }
 });
+
+initFromLocation();
