@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文学圣地测试 · 找到你的文学坐标</title>
+  <meta name="description" content="8 道题，测出属于你的文学朝圣圣地。都柏林、布拉格、巴黎左岸、中国西北，还是中土起点？">
+  <meta name="theme-color" content="#f4eee2">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f4eee2'/%3E%3Cpath d='M16 18h13a7 7 0 0 1 7 7v23a7 7 0 0 0-7-7H16z' fill='none' stroke='%239b3b2c' stroke-width='3'/%3E%3Cpath d='M48 18H35a7 7 0 0 0-7 7v23a7 7 0 0 1 7-7h13z' fill='none' stroke='%239b3b2c' stroke-width='3'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="grade" aria-hidden="true"></div>
+
+  <main class="stage">
+    <section id="screen-intro" class="screen is-active">
+      <p class="eyebrow">Literary Pilgrimage · Vol. 08</p>
+
+      <div class="title-wrap">
+        <h1>文学圣地<br><span>测试</span></h1>
+        <div class="seal" aria-hidden="true">朝圣</div>
+      </div>
+
+      <p class="lede">
+        每个人心里都有一座圣地。<br>
+        它可能是一间旧屋、一家酒馆，或一片雾中的森林。
+      </p>
+
+      <p class="meta">8 道题 · 约 2 分钟 · 凭直觉作答</p>
+
+      <div class="intro-actions">
+        <button type="button" class="btn btn-primary" id="start">开始朝圣 <span aria-hidden="true">→</span></button>
+      </div>
+
+      <p class="footnote">平票时，以第 8 题的直觉为准。</p>
+    </section>
+
+    <section id="screen-quiz" class="screen" aria-live="polite">
+      <header class="quiz-head">
+        <button type="button" class="ghost" id="back">← 上一题</button>
+        <div class="counter"><span id="qIndex">01</span><i>/</i><span>08</span></div>
+      </header>
+
+      <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1" id="progress">
+        <span id="progressFill"></span>
+      </div>
+
+      <div class="quiz-body">
+        <p class="q-kicker" id="qKicker">第 1 题</p>
+        <h2 class="q-text" id="qText"></h2>
+        <div class="options" id="options"></div>
+      </div>
+
+      <p class="hint">可用键盘 A–E 作答</p>
+    </section>
+
+    <section id="screen-result" class="screen">
+      <p class="eyebrow">Your Literary Holy Land</p>
+
+      <div class="result-letter" id="resultLetter" aria-hidden="true">A</div>
+      <h2 class="result-name" id="resultName"></h2>
+      <p class="result-tag" id="resultTag"></p>
+      <p class="result-coords" id="resultCoords"></p>
+
+      <div class="result-copy" id="resultCopy"></div>
+
+      <p class="tie-note" id="tieNote" hidden>你在几个圣地之间摇摆，最终由第 8 题的直觉做了决定。</p>
+
+      <div class="result-actions">
+        <button type="button" class="btn btn-primary" id="restart">再测一次</button>
+        <button type="button" class="btn btn-ghost" id="share">复制结果</button>
+      </div>
+
+      <p class="footnote">把结果发到评论区，看看有多少人跟你同路。</p>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
