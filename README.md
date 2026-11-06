@@ -4,7 +4,7 @@
 
 纯静态页面，无构建步骤、无外部依赖，可直接用 GitHub Pages 托管。
 
-功能包括：8 题测试、A–E 得分分布、结果直链、本地进度恢复、原生分享、1080×1440 结果海报（含可扫描回结果页的二维码），以及每个圣地对应的「3 本书 + 1 个具体地点 + 半日路线」朝圣手册。
+功能包括：8 题测试、A–E 得分分布、结果直链、本地进度恢复、原生分享、1080×1440 结果海报（含可扫描回结果页的二维码），每个圣地对应的「3 本书 + 1 个具体地点 + 半日路线」朝圣手册，以及记录解锁日期的「朝圣图鉴 / 时间地图」。
 
 ## 本地预览
 
@@ -32,6 +32,7 @@ python -m http.server 8000
 | `app.js` | 题库、计分、平票规则、直链、进度恢复、海报生成 |
 | `vendor/qrcode.js` | 海报二维码生成（qrcode-generator，MIT） |
 | `assets/photos/` | 五个圣地的实景照片（WebP，800w / 1200w / 1600w 三档） |
+| `assets/atlas/` | 朝圣地图（欧洲 / 中国西北，WebP） |
 | `og.png` | 微信 / X 等社交平台分享预览图 |
 | `apple-touch-icon.png` | iOS 添加到主屏幕图标 |
 
@@ -46,6 +47,7 @@ python -m http.server 8000
 | 巴黎 | Shadowgate | CC BY 2.0 | [Shakespeare and Company](https://commons.wikimedia.org/wiki/File:Shakespeare_and_Company_bookstore,_Paris_13_August_2013.jpg) |
 | 中国西北 | H2v5o68z | CC0 | [Baota Mountain](https://commons.wikimedia.org/wiki/File:Baota_Mountain_4.jpg) |
 | 牛津 | Honcques Laus | CC0 | [Bibliotheca Bodleiana](https://commons.wikimedia.org/wiki/File:Bibliotheca_Bodleiana.jpg) |
+| 朝圣地图 | Canuckguy 及贡献者 | Public domain | [BlankMap-World.svg](https://commons.wikimedia.org/wiki/File:BlankMap-World.svg) |
 
 ## 修改题目与结果
 

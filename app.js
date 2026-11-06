@@ -422,6 +422,24 @@ const els = {
   breakdown: document.getElementById("breakdown"),
   guide: document.getElementById("guide"),
   tieNote: document.getElementById("tieNote"),
+  collectionCount: document.getElementById("collectionCount"),
+  collectionStamps: document.getElementById("collectionStamps"),
+  collectionNote: document.getElementById("collectionNote"),
+  openAtlasResult: document.getElementById("openAtlasResult"),
+  atlasTrigger: document.getElementById("atlasTrigger"),
+  atlasCount: document.getElementById("atlasCount"),
+  atlasModal: document.getElementById("atlasModal"),
+  atlasBackdrop: document.getElementById("atlasBackdrop"),
+  atlasDialog: document.querySelector(".atlas-dialog"),
+  atlasClose: document.getElementById("atlasClose"),
+  atlasUnlocked: document.getElementById("atlasUnlocked"),
+  atlasHint: document.getElementById("atlasHint"),
+  atlasBar: document.getElementById("atlasBar"),
+  pinsEurope: document.getElementById("pinsEurope"),
+  pinsChina: document.getElementById("pinsChina"),
+  atlasTimeline: document.getElementById("atlasTimeline"),
+  atlasRestart: document.getElementById("atlasRestart"),
+  atlasDone: document.getElementById("atlasDone"),
   poster: document.getElementById("poster"),
   posterModal: document.getElementById("posterModal"),
   posterBackdrop: document.getElementById("posterBackdrop"),
@@ -438,6 +456,15 @@ const CHECK_ICON =
 
 const SITE_URL = "https://tapio-zs.github.io/Literary-Holy-Land-Test/";
 const STORAGE_KEY = "lhl-progress-v1";
+const COLLECTION_KEY = "lhl-collection-v1";
+
+const MAP_PINS = {
+  A: { panel: "europe", x: 37.3, y: 33.5 },
+  E: { panel: "europe", x: 46.3, y: 36.4 },
+  C: { panel: "europe", x: 50.0, y: 48.9 },
+  B: { panel: "europe", x: 76.0, y: 44.9 },
+  D: { panel: "china", x: 56.2, y: 48.4 }
+};
 
 let index = 0;
 let answers = new Array(QUESTIONS.length).fill(null);
@@ -447,6 +474,7 @@ let toastTimer = null;
 let lastLetter = "A";
 let resumeState = null;
 let lastFocused = null;
+let lastAtlasFocus = null;
 
 function setAccent(theme) {
   const root = document.documentElement.style;
@@ -759,6 +787,260 @@ function renderGuide(guide) {
   els.guide.appendChild(route);
 }
 
+function formatDate(timestamp) {
+  if (!timestamp) return "—";
+  const date = new Date(timestamp);
+  if (Number.isNaN(date.getTime())) return "—";
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(
+    date.getDate()
+  ).padStart(2, "0")}`;
+}
+
+function readCollection() {
+  try {
+    const raw = window.localStorage.getItem(COLLECTION_KEY);
+    const data = raw ? JSON.parse(raw) : null;
+    if (data && data.unlocked && typeof data.unlocked === "object") {
+      return data;
+    }
+  } catch (error) {
+    /* ignore */
+  }
+  return { unlocked: {} };
+}
+
+function countCollection(data) {
+  return Object.keys(RESULTS).filter((key) => data.unlocked && data.unlocked[key]).length;
+}
+
+function recordUnlock(letter) {
+  const data = readCollection();
+  const isNew = !data.unlocked[letter];
+
+  if (isNew) {
+    data.unlocked[letter] = { firstAt: Date.now(), count: 1 };
+  } else {
+    data.unlocked[letter].count = (data.unlocked[letter].count || 1) + 1;
+  }
+
+  try {
+    window.localStorage.setItem(COLLECTION_KEY, JSON.stringify(data));
+  } catch (error) {
+    /* ignore */
+  }
+
+  return { isNew, count: countCollection(data), data };
+}
+
+function updateAtlasTriggers(count) {
+  const total = Object.keys(RESULTS).length;
+  const unlocked = typeof count === "number" ? count : countCollection(readCollection());
+  els.atlasCount.textContent = `${unlocked}/${total}`;
+  els.atlasTrigger.setAttribute("aria-label", `打开朝圣地图，已解锁 ${unlocked} / ${total}`);
+}
+
+function renderCollection(info) {
+  const total = Object.keys(RESULTS).length;
+  const { count, data, isNew } = info;
+
+  els.collectionCount.textContent = `${count}/${total}`;
+  els.collectionStamps.innerHTML = "";
+
+  Object.keys(RESULTS).forEach((key) => {
+    const unlocked = Boolean(data.unlocked[key]);
+    const stamp = document.createElement("button");
+    stamp.type = "button";
+    stamp.className = "mini-stamp" + (unlocked ? " is-unlocked" : "");
+    stamp.dataset.letter = key;
+
+    if (unlocked) {
+      stamp.style.setProperty("--stamp", RESULTS[key].accent);
+      stamp.textContent = key;
+      stamp.setAttribute("aria-label", `${RESULTS[key].short}，已解锁，点击查看地图`);
+    } else {
+      stamp.textContent = "?";
+      stamp.setAttribute("aria-label", `${RESULTS[key].short}，未解锁，点击查看地图`);
+    }
+
+    if (isNew && key === lastLetter) {
+      stamp.classList.add("is-new");
+    }
+
+    stamp.addEventListener("click", () => openAtlas(key));
+    els.collectionStamps.appendChild(stamp);
+  });
+
+  const remaining = total - count;
+  if (count === total) {
+    els.collectionNote.textContent = "5/5 全部解锁。你的文学宇宙已经完整，可以回去看看每一座圣地。";
+  } else if (isNew) {
+    els.collectionNote.textContent = `解锁新圣地「${RESULTS[lastLetter].short}」。已收集 ${count}/${total}，还差 ${remaining} 座。`;
+  } else {
+    els.collectionNote.textContent = `又回到了「${RESULTS[lastLetter].short}」。已收集 ${count}/${total}，还差 ${remaining} 座；换个选择，也许会被带去别处。`;
+  }
+
+  const restartLabel = els.restart.querySelector("span");
+  if (restartLabel) {
+    restartLabel.textContent = count === total ? "再走一遍" : "再测一次 · 解锁下一座";
+  }
+
+  updateAtlasTriggers(count);
+}
+
+function selectAtlasStop(letter, unlocked, notify = true) {
+  els.atlasTimeline.querySelectorAll(".atlas-stop").forEach((stop) => {
+    stop.classList.toggle("is-active", stop.dataset.letter === letter);
+  });
+  els.atlasModal.querySelectorAll(".atlas-pin").forEach((pin) => {
+    pin.classList.toggle("is-active", pin.dataset.letter === letter);
+  });
+
+  if (unlocked) {
+    const stop = els.atlasTimeline.querySelector(`.atlas-stop[data-letter="${letter}"]`);
+    if (stop) {
+      stop.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    }
+  } else if (notify) {
+    showToast(`「${RESULTS[letter].short}」尚未解锁，再测一次试试`);
+  }
+}
+
+function renderAtlas() {
+  const data = readCollection();
+  const total = Object.keys(RESULTS).length;
+  const count = countCollection(data);
+
+  els.atlasUnlocked.textContent = String(count);
+  els.atlasHint.textContent =
+    count === total ? "全部解锁 · 你的文学宇宙已完整" : `已解锁 ${count} / ${total} · 还差 ${total - count} 座`;
+
+  els.atlasBar.style.width = "0%";
+  window.requestAnimationFrame(() => {
+    els.atlasBar.style.width = `${(count / total) * 100}%`;
+  });
+
+  els.pinsEurope.innerHTML = "";
+  els.pinsChina.innerHTML = "";
+
+  Object.keys(MAP_PINS).forEach((letter) => {
+    const position = MAP_PINS[letter];
+    const unlocked = Boolean(data.unlocked[letter]);
+    const pin = document.createElement("button");
+    pin.type = "button";
+    pin.className = "atlas-pin " + (unlocked ? "is-unlocked" : "is-locked");
+    pin.dataset.letter = letter;
+    pin.style.setProperty("--x", `${position.x}%`);
+    pin.style.setProperty("--y", `${position.y}%`);
+    pin.textContent = letter;
+    pin.dataset.tip = unlocked
+      ? `${RESULTS[letter].short} · ${formatDate(data.unlocked[letter].firstAt)}`
+      : `${RESULTS[letter].short} · 未解锁`;
+    pin.setAttribute(
+      "aria-label",
+      unlocked
+        ? `${RESULTS[letter].short}，已解锁于 ${formatDate(data.unlocked[letter].firstAt)}`
+        : `${RESULTS[letter].short}，未解锁`
+    );
+    pin.addEventListener("click", () => selectAtlasStop(letter, unlocked));
+    (position.panel === "china" ? els.pinsChina : els.pinsEurope).appendChild(pin);
+  });
+
+  const entries = Object.keys(RESULTS).map((key) => ({
+    key,
+    unlocked: Boolean(data.unlocked[key]),
+    at: data.unlocked[key] ? data.unlocked[key].firstAt || 0 : 0
+  }));
+
+  entries.sort((a, b) => {
+    if (a.unlocked !== b.unlocked) return a.unlocked ? -1 : 1;
+    if (a.unlocked && b.unlocked) return a.at - b.at;
+    return a.key.localeCompare(b.key);
+  });
+
+  els.atlasTimeline.innerHTML = "";
+  entries.forEach((entry) => {
+    const info = RESULTS[entry.key];
+    const item = document.createElement("li");
+    item.className = "atlas-stop " + (entry.unlocked ? "is-unlocked" : "is-locked");
+    item.dataset.letter = entry.key;
+    item.style.setProperty("--stop", info.accent);
+
+    const date = document.createElement("span");
+    date.className = "stop-date";
+    date.textContent = entry.unlocked ? formatDate(entry.at) : "未解锁";
+
+    const mark = document.createElement("span");
+    mark.className = "stop-mark";
+    mark.textContent = entry.unlocked ? entry.key : "?";
+
+    const body = document.createElement("div");
+    body.className = "stop-info";
+    const name = document.createElement("strong");
+    name.textContent = info.name;
+    const tag = document.createElement("p");
+    tag.textContent = entry.unlocked ? info.tag : `提示：${info.tag}`;
+    body.append(name, tag);
+
+    item.append(date, mark, body);
+    item.addEventListener("click", () => selectAtlasStop(entry.key, entry.unlocked));
+    els.atlasTimeline.appendChild(item);
+  });
+}
+
+function openAtlas(selected) {
+  lastAtlasFocus = document.activeElement;
+  renderAtlas();
+  els.atlasModal.hidden = false;
+  document.body.classList.add("atlas-open");
+  els.atlasClose.focus();
+
+  if (selected) {
+    const data = readCollection();
+    selectAtlasStop(selected, Boolean(data.unlocked[selected]), true);
+  }
+}
+
+function closeAtlas() {
+  els.atlasModal.hidden = true;
+  document.body.classList.remove("atlas-open");
+  if (lastAtlasFocus) {
+    try {
+      lastAtlasFocus.focus({ preventScroll: true });
+    } catch (error) {
+      lastAtlasFocus.focus();
+    }
+  }
+}
+
+function trapFocusWithin(dialog, event) {
+  const focusable = Array.from(
+    dialog.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')
+  ).filter((element) => element.offsetParent !== null);
+  if (focusable.length === 0) return;
+
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+
+  if (event.shiftKey && document.activeElement === first) {
+    event.preventDefault();
+    last.focus();
+  } else if (!event.shiftKey && document.activeElement === last) {
+    event.preventDefault();
+    first.focus();
+  }
+}
+
+function handleAtlasKeydown(event) {
+  if (event.key === "Escape") {
+    event.preventDefault();
+    closeAtlas();
+    return;
+  }
+  if (event.key === "Tab") {
+    trapFocusWithin(els.atlasDialog, event);
+  }
+}
+
 function renderPhoto(photo) {
   const img = els.resultPhoto;
   img.classList.remove("is-loaded");
@@ -798,6 +1080,7 @@ function showResult(options = {}) {
 
   setAccent(result);
   renderPhoto(result.photo);
+  const unlock = recordUnlock(letter);
 
   els.resultLetter.textContent = letter;
   els.resultName.textContent = result.name;
@@ -818,6 +1101,13 @@ function showResult(options = {}) {
   if (!options.skipHash) updateHash();
   saveProgress(true);
   els.resume.hidden = true;
+  renderCollection(unlock);
+  updateAtlasTriggers(unlock.count);
+
+  if (unlock.isNew) {
+    showToast(`解锁新圣地 · ${result.short}`);
+  }
+
   focusHeading(els.resultName);
 }
 
@@ -1306,7 +1596,7 @@ async function openPoster() {
   try {
     const dataUrl = await buildPoster(lastLetter);
 
-    lastFocused = document.activeElement;
+    lastFocused = els.poster;
     els.posterImage.src = dataUrl;
     els.posterImage.alt = `${result.name}——${result.tag}`;
     els.posterDownload.href = dataUrl;
@@ -1338,22 +1628,8 @@ function handlePosterKeydown(event) {
     closePoster();
     return;
   }
-  if (event.key !== "Tab") return;
-
-  const focusable = Array.from(
-    els.posterDialog.querySelectorAll('a[href], button:not([disabled])')
-  ).filter((element) => element.offsetParent !== null);
-  if (focusable.length === 0) return;
-
-  const first = focusable[0];
-  const last = focusable[focusable.length - 1];
-
-  if (event.shiftKey && document.activeElement === first) {
-    event.preventDefault();
-    last.focus();
-  } else if (!event.shiftKey && document.activeElement === last) {
-    event.preventDefault();
-    first.focus();
+  if (event.key === "Tab") {
+    trapFocusWithin(els.posterDialog, event);
   }
 }
 
@@ -1372,6 +1648,7 @@ function initFromLocation() {
     return;
   }
   refreshResumeButton();
+  updateAtlasTriggers();
 }
 
 window.addEventListener("hashchange", () => {
@@ -1423,6 +1700,17 @@ els.posterClose.addEventListener("click", closePoster);
 els.posterCancel.addEventListener("click", closePoster);
 els.posterBackdrop.addEventListener("click", closePoster);
 els.posterModal.addEventListener("keydown", handlePosterKeydown);
+
+els.openAtlasResult.addEventListener("click", () => openAtlas(lastLetter));
+els.atlasTrigger.addEventListener("click", () => openAtlas());
+els.atlasClose.addEventListener("click", closeAtlas);
+els.atlasBackdrop.addEventListener("click", closeAtlas);
+els.atlasDone.addEventListener("click", closeAtlas);
+els.atlasRestart.addEventListener("click", () => {
+  closeAtlas();
+  restart();
+});
+els.atlasModal.addEventListener("keydown", handleAtlasKeydown);
 
 document.addEventListener("keydown", (event) => {
   if (!screens.quiz.classList.contains("is-active")) return;
