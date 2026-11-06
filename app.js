@@ -1659,6 +1659,19 @@ window.addEventListener("hashchange", () => {
   showResult({ skipHash: true });
 });
 
+function warmAtlasAssets() {
+  ["assets/atlas/europe.webp", "assets/atlas/china.webp"].forEach((src) => {
+    const image = new Image();
+    image.src = src;
+  });
+}
+
+if ("requestIdleCallback" in window) {
+  window.requestIdleCallback(warmAtlasAssets, { timeout: 4000 });
+} else {
+  window.setTimeout(warmAtlasAssets, 2500);
+}
+
 const cursorGlow = document.getElementById("cursorGlow");
 let pointerX = 0;
 let pointerY = 0;
