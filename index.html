@@ -5,73 +5,137 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>文学圣地测试 · 找到你的文学坐标</title>
   <meta name="description" content="8 道题，测出属于你的文学朝圣圣地。都柏林、布拉格、巴黎左岸、中国西北，还是中土起点？">
-  <meta name="theme-color" content="#f4eee2">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%23f4eee2'/%3E%3Cpath d='M16 18h13a7 7 0 0 1 7 7v23a7 7 0 0 0-7-7H16z' fill='none' stroke='%239b3b2c' stroke-width='3'/%3E%3Cpath d='M48 18H35a7 7 0 0 0-7 7v23a7 7 0 0 1 7-7h13z' fill='none' stroke='%239b3b2c' stroke-width='3'/%3E%3C/svg%3E">
+  <meta name="theme-color" content="#0b0a09">
+  <meta property="og:title" content="文学圣地测试 · 找到你的文学坐标">
+  <meta property="og:description" content="8 道题，测出属于你的文学朝圣圣地。都柏林、布拉格、巴黎左岸、中国西北，还是中土起点？">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b0a09'/%3E%3Crect x='17' y='17' width='30' height='30' rx='6' fill='none' stroke='%23e2a45c' stroke-width='2.4' transform='rotate(-6 32 32)'/%3E%3Ctext x='32' y='41' font-family='serif' font-size='22' fill='%23e2a45c' text-anchor='middle'%3E%E5%9C%A3%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="grade" aria-hidden="true"></div>
+  <div class="ambient" aria-hidden="true">
+    <span class="glow glow-1"></span>
+    <span class="glow glow-2"></span>
+  </div>
+  <div class="cursor-glow" id="cursorGlow" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
 
   <main class="stage">
+    <header class="masthead">
+      <a class="brand" href="./" aria-label="文学朝圣计划首页">
+        <span class="brand-seal">圣</span>
+        <span class="brand-name">文学朝圣计划</span>
+      </a>
+      <span class="vol">Vol. 08 / 2026</span>
+    </header>
+
     <section id="screen-intro" class="screen is-active">
-      <p class="eyebrow">Literary Pilgrimage · Vol. 08</p>
+      <div class="intro-grid">
+        <div class="intro-copy">
+          <p class="eyebrow"><span class="eyebrow-dot"></span>Literary Pilgrimage</p>
 
-      <div class="title-wrap">
-        <h1>文学圣地<br><span>测试</span></h1>
-        <div class="seal" aria-hidden="true">朝圣</div>
+          <h1>
+            <span class="h1-line">找到你的</span>
+            <span class="h1-line h1-accent">文学圣地</span>
+          </h1>
+
+          <p class="lede">
+            每个人心里都有一座圣地。<br>
+            它可能是一间旧屋、一家酒馆，或一片雾中的森林。
+          </p>
+
+          <div class="intro-actions">
+            <button type="button" class="btn btn-primary" id="start">
+              <span>开始朝圣</span>
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14M13 6l6 6-6 6"/>
+              </svg>
+            </button>
+            <p class="meta">8 道题 · 约 2 分钟 · 凭直觉作答</p>
+          </div>
+        </div>
+
+        <div class="orbit" aria-hidden="true">
+          <div class="orbit-ring"></div>
+          <span class="orbit-node">A</span>
+          <span class="orbit-node">B</span>
+          <span class="orbit-node">C</span>
+          <span class="orbit-node">D</span>
+          <span class="orbit-node">E</span>
+          <div class="orbit-core">
+            <span class="orbit-q">?</span>
+            <span class="orbit-label">你的坐标</span>
+          </div>
+        </div>
       </div>
 
-      <p class="lede">
-        每个人心里都有一座圣地。<br>
-        它可能是一间旧屋、一家酒馆，或一片雾中的森林。
-      </p>
-
-      <p class="meta">8 道题 · 约 2 分钟 · 凭直觉作答</p>
-
-      <div class="intro-actions">
-        <button type="button" class="btn btn-primary" id="start">开始朝圣 <span aria-hidden="true">→</span></button>
-      </div>
-
-      <p class="footnote">平票时，以第 8 题的直觉为准。</p>
+      <footer class="intro-footer">
+        <span>平票时，以第 8 题的直觉为准</span>
+        <span>© Tapio 2026</span>
+      </footer>
     </section>
 
     <section id="screen-quiz" class="screen" aria-live="polite">
       <header class="quiz-head">
-        <button type="button" class="ghost" id="back">← 上一题</button>
-        <div class="counter"><span id="qIndex">01</span><i>/</i><span>08</span></div>
+        <button type="button" class="pill-back" id="back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M19 12H5M11 18l-6-6 6-6"/>
+          </svg>
+          <span>返回</span>
+        </button>
+        <div class="counter"><strong id="qIndex">01</strong><span>/ 08</span></div>
       </header>
 
-      <div class="progress" role="progressbar" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1" id="progress">
-        <span id="progressFill"></span>
+      <div class="progress" id="progress" role="progressbar" aria-valuemin="1" aria-valuemax="8" aria-valuenow="1">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
       </div>
 
       <div class="quiz-body">
-        <p class="q-kicker" id="qKicker">第 1 题</p>
+        <span class="ghost-num" id="ghostNum" aria-hidden="true">01</span>
+        <p class="q-kicker" id="qKicker">Question 01</p>
         <h2 class="q-text" id="qText"></h2>
         <div class="options" id="options"></div>
       </div>
 
-      <p class="hint">可用键盘 A–E 作答</p>
+      <p class="hint">按 <kbd>A</kbd>–<kbd>E</kbd> 快速作答 · <kbd>←</kbd> 返回上一题</p>
     </section>
 
-    <section id="screen-result" class="screen">
-      <p class="eyebrow">Your Literary Holy Land</p>
+    <section id="screen-result" class="screen screen-result">
+      <p class="eyebrow"><span class="eyebrow-dot"></span>Your Literary Holy Land</p>
 
-      <div class="result-letter" id="resultLetter" aria-hidden="true">A</div>
-      <h2 class="result-name" id="resultName"></h2>
-      <p class="result-tag" id="resultTag"></p>
-      <p class="result-coords" id="resultCoords"></p>
+      <div class="result-top">
+        <div class="stamp" aria-hidden="true">
+          <span class="stamp-letter" id="resultLetter">A</span>
+          <span class="stamp-label">Holy Land</span>
+        </div>
+        <div class="result-heading">
+          <p class="result-tag" id="resultTag"></p>
+          <h2 class="result-name" id="resultName"></h2>
+          <p class="result-coords" id="resultCoords"></p>
+        </div>
+      </div>
 
-      <div class="result-copy" id="resultCopy"></div>
+      <div class="result-panel" id="resultCopy"></div>
 
       <p class="tie-note" id="tieNote" hidden>你在几个圣地之间摇摆，最终由第 8 题的直觉做了决定。</p>
 
       <div class="result-actions">
-        <button type="button" class="btn btn-primary" id="restart">再测一次</button>
-        <button type="button" class="btn btn-ghost" id="share">复制结果</button>
+        <button type="button" class="btn btn-primary" id="restart">
+          <span>再测一次</span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M20 11a8 8 0 1 0-2.34 5.66M20 5v6h-6"/>
+          </svg>
+        </button>
+        <button type="button" class="btn btn-ghost" id="share">
+          <span>分享结果</span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+            <path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"/>
+          </svg>
+        </button>
       </div>
 
-      <p class="footnote">把结果发到评论区，看看有多少人跟你同路。</p>
+      <p class="result-foot">把结果发到评论区，看看有多少人跟你同路。</p>
     </section>
   </main>
 

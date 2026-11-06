@@ -86,6 +86,9 @@ const RESULTS = {
     name: "都柏林 · 文学旧宅",
     tag: "敏感、内省、旧时代的诗意",
     coords: "53.3498° N · 6.2603° W",
+    accent: "#8fbfa4",
+    rgb: "143, 191, 164",
+    deep: "#4e7a65",
     paragraphs: [
       "你是那种“把一句话在心里磨三天”的人。你的朝圣不是热闹的，是安静的：一间老屋、一盏台灯、一个死去的灵魂。",
       "你适合去都柏林，在乔伊斯的旧居里坐一下午，什么都不做，只是“在”。"
@@ -95,6 +98,9 @@ const RESULTS = {
     name: "布拉格 · 荒诞酒馆",
     tag: "讽刺、幽默、看透荒诞",
     coords: "50.0755° N · 14.4378° E",
+    accent: "#e0b25a",
+    rgb: "224, 178, 90",
+    deep: "#8a6a2a",
     paragraphs: [
       "你看得透，但你不苦大仇深。你相信笑是最好的武器。",
       "布拉格适合你——卡夫卡写荒诞，哈谢克写好兵帅克，这座城市的幽默是带刺的。你会在一家深夜酒馆里找到同类。"
@@ -104,6 +110,9 @@ const RESULTS = {
     name: "巴黎 · 左岸咖啡馆",
     tag: "热血、幻灭、时代现场",
     coords: "48.8566° N · 2.3522° E",
+    accent: "#e68a72",
+    rgb: "230, 138, 114",
+    deep: "#8c4436",
     paragraphs: [
       "你热血过，也失望过，但你还在较劲。你的朝圣是“现场”：一群人、一个时代、一场争论到深夜的聚会。",
       "去巴黎左岸吧，坐在那些咖啡馆里，想象一百年前也有人在这里为理想吵得面红耳赤。"
@@ -113,6 +122,9 @@ const RESULTS = {
     name: "中国西北 · 平凡的土地",
     tag: "务实、苦难、真实的人间",
     coords: "36.5853° N · 109.4900° E",
+    accent: "#d99a5b",
+    rgb: "217, 154, 91",
+    deep: "#7d5228",
     paragraphs: [
       "你不爱煽情，你只认真实。你的朝圣是脚踩在土上、看见那些被时代碾过却还在走的人。",
       "去西北吧，走一走路遥写过的那些路，你会明白：最深的文学不在书里，在人间。"
@@ -122,12 +134,17 @@ const RESULTS = {
     name: "牛津 · 中土起点",
     tag: "想象、造世、雾中森林",
     coords: "51.7520° N · 1.2577° W",
+    accent: "#a9a0e6",
+    rgb: "169, 160, 230",
+    deep: "#5f5896",
     paragraphs: [
       "你脑子里住着一整个宇宙。你的朝圣地点“不存在”——但你知道它应该在哪里。",
       "去牛津吧，托尔金在那里造出了中土。你会站在某条街上突然觉得：雾后面有东西。"
     ]
   }
 };
+
+const DEFAULT_ACCENT = { accent: "#e2a45c", rgb: "226, 164, 92", deep: "#8a5a2a" };
 
 const screens = {
   intro: document.getElementById("screen-intro"),
@@ -142,10 +159,10 @@ const els = {
   share: document.getElementById("share"),
   qIndex: document.getElementById("qIndex"),
   qKicker: document.getElementById("qKicker"),
+  ghostNum: document.getElementById("ghostNum"),
   qText: document.getElementById("qText"),
   options: document.getElementById("options"),
   progress: document.getElementById("progress"),
-  progressFill: document.getElementById("progressFill"),
   resultLetter: document.getElementById("resultLetter"),
   resultName: document.getElementById("resultName"),
   resultTag: document.getElementById("resultTag"),
@@ -155,12 +172,26 @@ const els = {
   toast: document.getElementById("toast")
 };
 
+const CHECK_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7"/></svg>';
+
 let index = 0;
 let answers = new Array(QUESTIONS.length).fill(null);
 let locked = false;
 let advanceTimer = null;
 let toastTimer = null;
 let lastLetter = "A";
+
+function setAccent(theme) {
+  const root = document.documentElement.style;
+  root.setProperty("--accent", theme.accent);
+  root.setProperty("--accent-rgb", theme.rgb);
+  root.setProperty("--accent-deep", theme.deep);
+}
+
+function resetAccent() {
+  setAccent(DEFAULT_ACCENT);
+}
 
 function showScreen(name) {
   Object.entries(screens).forEach(([key, el]) => {
@@ -171,17 +202,20 @@ function showScreen(name) {
 
 function renderQuestion() {
   const question = QUESTIONS[index];
+  const label = String(index + 1).padStart(2, "0");
 
-  els.qIndex.textContent = String(index + 1).padStart(2, "0");
-  els.qKicker.textContent = `第 ${index + 1} 题`;
+  els.qIndex.textContent = label;
+  els.ghostNum.textContent = label;
+  els.qKicker.textContent = `Question ${label}`;
   els.qText.textContent = question.question;
 
   els.options.innerHTML = "";
-  question.options.forEach((option) => {
+  question.options.forEach((option, i) => {
     const button = document.createElement("button");
     button.type = "button";
     button.className = "option";
     button.dataset.letter = option.letter;
+    button.style.setProperty("--i", String(i));
 
     const letter = document.createElement("span");
     letter.className = "letter";
@@ -191,7 +225,11 @@ function renderQuestion() {
     text.className = "option-text";
     text.textContent = option.text;
 
-    button.append(letter, text);
+    const check = document.createElement("span");
+    check.className = "check";
+    check.innerHTML = CHECK_ICON;
+
+    button.append(letter, text, check);
 
     if (answers[index] === option.letter) {
       button.classList.add("is-selected");
@@ -201,9 +239,12 @@ function renderQuestion() {
     els.options.appendChild(button);
   });
 
-  const progress = ((index + 1) / QUESTIONS.length) * 100;
-  els.progressFill.style.width = `${progress}%`;
+  const total = QUESTIONS.length;
+  Array.from(els.progress.children).forEach((segment, i) => {
+    segment.classList.toggle("is-done", i <= index);
+  });
   els.progress.setAttribute("aria-valuenow", String(index + 1));
+  els.progress.setAttribute("aria-valuemax", String(total));
   els.back.disabled = index === 0;
 }
 
@@ -225,7 +266,7 @@ function choose(letter) {
       index += 1;
       renderQuestion();
     }
-  }, 280);
+  }, 300);
 }
 
 function goBack() {
@@ -261,6 +302,8 @@ function showResult() {
   const result = RESULTS[letter];
   lastLetter = letter;
 
+  setAccent(result);
+
   els.resultLetter.textContent = letter;
   els.resultName.textContent = result.name;
   els.resultTag.textContent = result.tag;
@@ -281,6 +324,7 @@ function restart() {
   index = 0;
   answers = new Array(QUESTIONS.length).fill(null);
   locked = false;
+  resetAccent();
   renderQuestion();
   showScreen("quiz");
 }
@@ -294,26 +338,68 @@ function showToast(message) {
   }, 2200);
 }
 
-async function copyResult() {
+function copyText(text) {
+  return navigator.clipboard.writeText(text).then(
+    () => true,
+    () => {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.opacity = "0";
+      document.body.appendChild(textarea);
+      textarea.select();
+      const ok = document.execCommand("copy");
+      document.body.removeChild(textarea);
+      return ok;
+    }
+  );
+}
+
+async function shareResult() {
   const result = RESULTS[lastLetter];
   const text = `我的文学朝圣圣地是「${result.name}」——${result.tag}。#文学朝圣测试`;
+  const url = window.location.href;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: "文学圣地测试", text, url });
+      return;
+    } catch (error) {
+      if (error && error.name === "AbortError") return;
+    }
+  }
 
   try {
-    await navigator.clipboard.writeText(text);
-    showToast("已复制，去分享你的圣地吧");
+    const ok = await copyText(`${text}\n${url}`);
+    showToast(ok ? "结果已复制，去分享吧" : "复制失败，请手动选择文字");
   } catch (error) {
-    const textarea = document.createElement("textarea");
-    textarea.value = text;
-    textarea.setAttribute("readonly", "");
-    textarea.style.position = "fixed";
-    textarea.style.opacity = "0";
-    document.body.appendChild(textarea);
-    textarea.select();
-    const ok = document.execCommand("copy");
-    document.body.removeChild(textarea);
-    showToast(ok ? "已复制，去分享你的圣地吧" : "复制失败，请手动选择文字");
+    showToast("复制失败，请手动选择文字");
   }
 }
+
+const cursorGlow = document.getElementById("cursorGlow");
+let pointerX = 0;
+let pointerY = 0;
+let glowFrame = null;
+
+window.addEventListener(
+  "pointermove",
+  (event) => {
+    if (event.pointerType && event.pointerType !== "mouse") return;
+    pointerX = event.clientX;
+    pointerY = event.clientY;
+    cursorGlow.classList.add("is-on");
+    if (glowFrame !== null) return;
+    glowFrame = window.requestAnimationFrame(() => {
+      const style = document.documentElement.style;
+      style.setProperty("--mx", `${pointerX}px`);
+      style.setProperty("--my", `${pointerY}px`);
+      glowFrame = null;
+    });
+  },
+  { passive: true }
+);
 
 els.start.addEventListener("click", () => {
   showScreen("quiz");
@@ -322,7 +408,7 @@ els.start.addEventListener("click", () => {
 
 els.back.addEventListener("click", goBack);
 els.restart.addEventListener("click", restart);
-els.share.addEventListener("click", copyResult);
+els.share.addEventListener("click", shareResult);
 
 document.addEventListener("keydown", (event) => {
   if (!screens.quiz.classList.contains("is-active")) return;
