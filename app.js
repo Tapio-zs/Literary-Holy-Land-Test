@@ -90,6 +90,19 @@ const RESULTS = {
     accent: "#8fbfa4",
     rgb: "143, 191, 164",
     deep: "#4e7a65",
+    photo: {
+      src: "assets/photos/dublin-1600.webp",
+      srcset: "assets/photos/dublin-800.webp 800w, assets/photos/dublin-1200.webp 1200w, assets/photos/dublin-1600.webp 1600w",
+      width: 1600,
+      height: 1067,
+      alt: "都柏林三一学院入口",
+      credit: {
+        author: "Stephen Bergin",
+        license: "CC0",
+        licenseUrl: "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        page: "https://commons.wikimedia.org/wiki/File:The_entrance_of_the_historic_Trinity_College_(Unsplash).jpg"
+      }
+    },
     paragraphs: [
       "你是那种“把一句话在心里磨三天”的人。你的朝圣不是热闹的，是安静的：一间老屋、一盏台灯、一个死去的灵魂。",
       "你适合去都柏林，在乔伊斯的旧居里坐一下午，什么都不做，只是“在”。"
@@ -138,6 +151,19 @@ const RESULTS = {
     accent: "#e0b25a",
     rgb: "224, 178, 90",
     deep: "#8a6a2a",
+    photo: {
+      src: "assets/photos/prague-1600.webp",
+      srcset: "assets/photos/prague-800.webp 800w, assets/photos/prague-1200.webp 1200w, assets/photos/prague-1600.webp 1600w",
+      width: 1600,
+      height: 1067,
+      alt: "布拉格日出时的老城与伏尔塔瓦河",
+      credit: {
+        author: "ALZOE",
+        license: "CC BY-SA 4.0",
+        licenseUrl: "https://creativecommons.org/licenses/by-sa/4.0",
+        page: "https://commons.wikimedia.org/wiki/File:Prague_at_sunrise.jpg"
+      }
+    },
     paragraphs: [
       "你看得透，但你不苦大仇深。你相信笑是最好的武器。",
       "布拉格适合你——卡夫卡写荒诞，哈谢克写好兵帅克，这座城市的幽默是带刺的。你会在一家深夜酒馆里找到同类。"
@@ -187,6 +213,19 @@ const RESULTS = {
     accent: "#e68a72",
     rgb: "230, 138, 114",
     deep: "#8c4436",
+    photo: {
+      src: "assets/photos/paris-1600.webp",
+      srcset: "assets/photos/paris-800.webp 800w, assets/photos/paris-1200.webp 1200w, assets/photos/paris-1600.webp 1600w",
+      width: 1600,
+      height: 1067,
+      alt: "巴黎莎士比亚书店门面",
+      credit: {
+        author: "Shadowgate",
+        license: "CC BY 2.0",
+        licenseUrl: "https://creativecommons.org/licenses/by/2.0",
+        page: "https://commons.wikimedia.org/wiki/File:Shakespeare_and_Company_bookstore,_Paris_13_August_2013.jpg"
+      }
+    },
     paragraphs: [
       "你热血过，也失望过，但你还在较劲。你的朝圣是“现场”：一群人、一个时代、一场争论到深夜的聚会。",
       "去巴黎左岸吧，坐在那些咖啡馆里，想象一百年前也有人在这里为理想吵得面红耳赤。"
@@ -236,6 +275,19 @@ const RESULTS = {
     accent: "#d99a5b",
     rgb: "217, 154, 91",
     deep: "#7d5228",
+    photo: {
+      src: "assets/photos/xian-1600.webp",
+      srcset: "assets/photos/xian-800.webp 800w, assets/photos/xian-1200.webp 1200w, assets/photos/xian-1600.webp 1600w",
+      width: 1600,
+      height: 1200,
+      alt: "延安宝塔山",
+      credit: {
+        author: "H2v5o68z",
+        license: "CC0",
+        licenseUrl: "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        page: "https://commons.wikimedia.org/wiki/File:Baota_Mountain_4.jpg"
+      }
+    },
     paragraphs: [
       "你不爱煽情，你只认真实。你的朝圣是脚踩在土上、看见那些被时代碾过却还在走的人。",
       "去西北吧，走一走路遥写过的那些路，你会明白：最深的文学不在书里，在人间。"
@@ -284,6 +336,19 @@ const RESULTS = {
     accent: "#a9a0e6",
     rgb: "169, 160, 230",
     deep: "#5f5896",
+    photo: {
+      src: "assets/photos/oxford-1600.webp",
+      srcset: "assets/photos/oxford-800.webp 800w, assets/photos/oxford-1200.webp 1200w, assets/photos/oxford-1600.webp 1600w",
+      width: 1600,
+      height: 1177,
+      alt: "牛津大学博德利图书馆",
+      credit: {
+        author: "Honcques Laus",
+        license: "CC0",
+        licenseUrl: "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+        page: "https://commons.wikimedia.org/wiki/File:Bibliotheca_Bodleiana.jpg"
+      }
+    },
     paragraphs: [
       "你脑子里住着一整个宇宙。你的朝圣地点“不存在”——但你知道它应该在哪里。",
       "去牛津吧，托尔金在那里造出了中土。你会站在某条街上突然觉得：雾后面有东西。"
@@ -347,6 +412,8 @@ const els = {
   qText: document.getElementById("qText"),
   options: document.getElementById("options"),
   progress: document.getElementById("progress"),
+  resultPhoto: document.getElementById("resultPhoto"),
+  resultCredit: document.getElementById("resultCredit"),
   resultLetter: document.getElementById("resultLetter"),
   resultName: document.getElementById("resultName"),
   resultTag: document.getElementById("resultTag"),
@@ -692,12 +759,45 @@ function renderGuide(guide) {
   els.guide.appendChild(route);
 }
 
+function renderPhoto(photo) {
+  const img = els.resultPhoto;
+  img.classList.remove("is-loaded");
+  img.alt = photo.alt;
+  img.width = photo.width;
+  img.height = photo.height;
+  img.sizes = "(max-width: 880px) 100vw, 1008px";
+  img.srcset = photo.srcset;
+  img.onload = () => img.classList.add("is-loaded");
+  img.src = photo.src;
+
+  const makeLink = (href, text) => {
+    const link = document.createElement("a");
+    link.href = href;
+    link.target = "_blank";
+    link.rel = "noopener noreferrer";
+    link.textContent = text;
+    return link;
+  };
+
+  els.resultCredit.textContent = "";
+  els.resultCredit.append(
+    "Photo: ",
+    makeLink(photo.credit.page, photo.credit.author),
+    " · ",
+    makeLink(photo.credit.licenseUrl, photo.credit.license),
+    " · ",
+    makeLink(photo.credit.page, "Wikimedia Commons"),
+    " · 已压缩"
+  );
+}
+
 function showResult(options = {}) {
   const { letter, tie, counts } = computeResult();
   const result = RESULTS[letter];
   lastLetter = letter;
 
   setAccent(result);
+  renderPhoto(result.photo);
 
   els.resultLetter.textContent = letter;
   els.resultName.textContent = result.name;
@@ -1026,7 +1126,25 @@ function drawPosterQr(ctx, url, x, y, size) {
   }
 }
 
-function buildPoster(letter) {
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+function drawImageCover(ctx, img, x, y, width, height) {
+  const scale = Math.max(width / img.width, height / img.height);
+  const drawWidth = img.width * scale;
+  const drawHeight = img.height * scale;
+  const offsetX = x + (width - drawWidth) / 2;
+  const offsetY = y + (height - drawHeight) / 2;
+  ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+}
+
+async function buildPoster(letter) {
   const result = RESULTS[letter];
   const counts = computeCounts();
   const accent = result.accent;
@@ -1040,6 +1158,21 @@ function buildPoster(letter) {
 
   ctx.fillStyle = "#0b0a09";
   ctx.fillRect(0, 0, width, height);
+
+  try {
+    const hero = await loadImage(result.photo.src);
+    drawImageCover(ctx, hero, 0, 0, width, height);
+    ctx.fillStyle = "rgba(11, 10, 9, 0.62)";
+    ctx.fillRect(0, 0, width, height);
+    const shade = ctx.createLinearGradient(0, 0, 0, height);
+    shade.addColorStop(0, "rgba(11, 10, 9, 0.18)");
+    shade.addColorStop(0.5, "rgba(11, 10, 9, 0.42)");
+    shade.addColorStop(1, "rgba(11, 10, 9, 0.86)");
+    ctx.fillStyle = shade;
+    ctx.fillRect(0, 0, width, height);
+  } catch (error) {
+    /* 照片加载失败时退回纯色背景 */
+  }
 
   const addGlow = (x, y, radius, color) => {
     const gradient = ctx.createRadialGradient(x, y, 0, x, y, radius);
@@ -1149,23 +1282,42 @@ function buildPoster(letter) {
   ctx.textAlign = "center";
   ctx.fillStyle = "rgba(244, 236, 223, 0.34)";
   ctx.font = `400 16px ${POSTER_SANS}`;
-  ctx.fillText("LITERARY HOLY LAND TEST · TAPIO 2026", width / 2, 1370);
+  ctx.fillText("LITERARY HOLY LAND TEST · TAPIO 2026", width / 2, 1352);
+
+  ctx.fillStyle = "rgba(244, 236, 223, 0.28)";
+  ctx.font = `400 12px ${POSTER_SANS}`;
+  ctx.fillText(
+    `Photo: ${result.photo.credit.author} · ${result.photo.credit.license} · Wikimedia Commons`,
+    width / 2,
+    1380
+  );
 
   return canvas.toDataURL("image/png");
 }
 
-function openPoster() {
+async function openPoster() {
   const result = RESULTS[lastLetter];
-  const dataUrl = buildPoster(lastLetter);
+  const posterLabel = els.poster.querySelector("span");
+  const originalLabel = posterLabel.textContent;
 
-  lastFocused = document.activeElement;
-  els.posterImage.src = dataUrl;
-  els.posterImage.alt = `${result.name}——${result.tag}`;
-  els.posterDownload.href = dataUrl;
-  els.posterDownload.download = `文学圣地-${result.short}.png`;
-  els.posterModal.hidden = false;
-  document.body.classList.add("poster-open");
-  els.posterClose.focus();
+  els.poster.disabled = true;
+  posterLabel.textContent = "生成中…";
+
+  try {
+    const dataUrl = await buildPoster(lastLetter);
+
+    lastFocused = document.activeElement;
+    els.posterImage.src = dataUrl;
+    els.posterImage.alt = `${result.name}——${result.tag}`;
+    els.posterDownload.href = dataUrl;
+    els.posterDownload.download = `文学圣地-${result.short}.png`;
+    els.posterModal.hidden = false;
+    document.body.classList.add("poster-open");
+    els.posterClose.focus();
+  } finally {
+    els.poster.disabled = false;
+    posterLabel.textContent = originalLabel;
+  }
 }
 
 function closePoster() {
@@ -1259,9 +1411,9 @@ els.back.addEventListener("click", goBack);
 els.restart.addEventListener("click", restart);
 els.share.addEventListener("click", shareResult);
 
-els.poster.addEventListener("click", () => {
+els.poster.addEventListener("click", async () => {
   try {
-    openPoster();
+    await openPoster();
   } catch (error) {
     showToast("海报生成失败，请稍后再试");
   }

@@ -31,8 +31,21 @@ python -m http.server 8000
 | `style.css` | 深色电影感样式、光晕/颗粒/玻璃质感与移动端优先适配 |
 | `app.js` | 题库、计分、平票规则、直链、进度恢复、海报生成 |
 | `vendor/qrcode.js` | 海报二维码生成（qrcode-generator，MIT） |
+| `assets/photos/` | 五个圣地的实景照片（WebP，800w / 1200w / 1600w 三档） |
 | `og.png` | 微信 / X 等社交平台分享预览图 |
 | `apple-touch-icon.png` | iOS 添加到主屏幕图标 |
+
+## 图片来源与许可
+
+照片均来自 Wikimedia Commons，已压缩为 WebP。CC BY / CC BY-SA 图片保留署名与许可链接；页面结果图下方也会显示对应信息。
+
+| 圣地 | 作者 | 许可 | 来源 |
+| --- | --- | --- | --- |
+| 都柏林 | Stephen Bergin | CC0 | [Trinity College entrance](https://commons.wikimedia.org/wiki/File:The_entrance_of_the_historic_Trinity_College_(Unsplash).jpg) |
+| 布拉格 | ALZOE | CC BY-SA 4.0 | [Prague at sunrise](https://commons.wikimedia.org/wiki/File:Prague_at_sunrise.jpg) |
+| 巴黎 | Shadowgate | CC BY 2.0 | [Shakespeare and Company](https://commons.wikimedia.org/wiki/File:Shakespeare_and_Company_bookstore,_Paris_13_August_2013.jpg) |
+| 中国西北 | H2v5o68z | CC0 | [Baota Mountain](https://commons.wikimedia.org/wiki/File:Baota_Mountain_4.jpg) |
+| 牛津 | Honcques Laus | CC0 | [Bibliotheca Bodleiana](https://commons.wikimedia.org/wiki/File:Bibliotheca_Bodleiana.jpg) |
 
 ## 修改题目与结果
 
