@@ -93,7 +93,42 @@ const RESULTS = {
     paragraphs: [
       "你是那种“把一句话在心里磨三天”的人。你的朝圣不是热闹的，是安静的：一间老屋、一盏台灯、一个死去的灵魂。",
       "你适合去都柏林，在乔伊斯的旧居里坐一下午，什么都不做，只是“在”。"
-    ]
+    ],
+    guide: {
+      books: [
+        {
+          title: "《都柏林人》",
+          meta: "詹姆斯·乔伊斯 · 1914 · 短篇集",
+          note: "十五个短篇写尽城市的瘫痪与顿悟。先读最后一篇《死者》。"
+        },
+        {
+          title: "《尤利西斯》",
+          meta: "詹姆斯·乔伊斯 · 1922 · 长篇小说",
+          note: "一天一夜的都柏林。读不完也没关系，先看第六章《哈得斯》。"
+        },
+        {
+          title: "《凯尔特的薄暮》",
+          meta: "W.B. 叶芝 · 1893 · 民间故事",
+          note: "叶芝收集的爱尔兰传说，是这座城市另一层雾。"
+        }
+      ],
+      place: {
+        name: "詹姆斯·乔伊斯中心",
+        address: "35 North Great George's St, Dublin 1",
+        note: "一栋乔治亚式老宅，藏着手稿、书信和《尤利西斯》的旧物。开放时间常变，出发前查官网。"
+      },
+      route: {
+        title: "利菲河两岸 · 半日步行",
+        duration: "约 4 小时 · 3.5 km",
+        stops: [
+          { time: "10:00", name: "三一学院 &《凯尔经》", note: "从 Book of Kells 开始，看乔伊斯与叶芝的城市底色。" },
+          { time: "11:30", name: "詹姆斯·乔伊斯中心", note: "老宅里看手稿与书信，慢慢待一会儿。" },
+          { time: "13:00", name: "O'Connell 街 → 利菲河 → 圣斯蒂芬绿地", note: "过桥、吃午饭，在公园里读两页书。" },
+          { time: "15:00", name: "桑迪蒙特海滨", note: "《尤利西斯》第三章的散步地，退潮时最像书里。" }
+        ],
+        note: "都柏林多雨，带防水外套；海滨风大，傍晚降温快。"
+      }
+    }
   },
   B: {
     name: "布拉格 · 荒诞酒馆",
@@ -106,7 +141,43 @@ const RESULTS = {
     paragraphs: [
       "你看得透，但你不苦大仇深。你相信笑是最好的武器。",
       "布拉格适合你——卡夫卡写荒诞，哈谢克写好兵帅克，这座城市的幽默是带刺的。你会在一家深夜酒馆里找到同类。"
-    ]
+    ],
+    guide: {
+      books: [
+        {
+          title: "《变形记》",
+          meta: "弗朗茨·卡夫卡 · 1915 · 中篇小说",
+          note: "从一只甲虫开始，理解布拉格的荒诞。"
+        },
+        {
+          title: "《好兵帅克》",
+          meta: "雅罗斯拉夫·哈谢克 · 1923 · 长篇小说",
+          note: "把帝国、战争和官僚系统全部变成笑话。"
+        },
+        {
+          title: "《城堡》",
+          meta: "弗朗茨·卡夫卡 · 1926 · 长篇小说",
+          note: "永远走不进去的城堡，像这座城市的雾。"
+        }
+      ],
+      place: {
+        name: "卡夫卡博物馆",
+        address: "Cihelná 2b, 118 00 Malá Strana",
+        note: "伏尔塔瓦河边，按卡夫卡生平与作品布展；院子里有那两个会动的雕塑。"
+      },
+      route: {
+        title: "老城—小城 · 半日",
+        duration: "约 4 小时 · 3 km",
+        stops: [
+          { time: "09:30", name: "老城广场", note: "从天文钟下出发，避开整点人潮。" },
+          { time: "10:30", name: "查理大桥", note: "过桥时数一数三十座圣像。" },
+          { time: "11:30", name: "卡夫卡博物馆", note: "看卡夫卡与布拉格的纠缠，再去河边坐一会儿。" },
+          { time: "13:30", name: "黄金巷 22 号", note: "卡夫卡曾在此写作；在布拉格城堡内，需城堡门票。" },
+          { time: "15:00", name: "金虎酒馆（U Zlatého tygra）", note: "哈谢克常来的老酒馆，点一杯皮尔森收尾。" }
+        ],
+        note: "黄金巷需购布拉格城堡套票；金虎酒馆傍晚人多，想坐吧台要早去。"
+      }
+    }
   },
   C: {
     name: "巴黎 · 左岸咖啡馆",
@@ -119,7 +190,43 @@ const RESULTS = {
     paragraphs: [
       "你热血过，也失望过，但你还在较劲。你的朝圣是“现场”：一群人、一个时代、一场争论到深夜的聚会。",
       "去巴黎左岸吧，坐在那些咖啡馆里，想象一百年前也有人在这里为理想吵得面红耳赤。"
-    ]
+    ],
+    guide: {
+      books: [
+        {
+          title: "《流动的盛宴》",
+          meta: "欧内斯特·海明威 · 1964 · 回忆录",
+          note: "1920 年代左岸的咖啡馆、书店和穷日子。"
+        },
+        {
+          title: "《太阳照常升起》",
+          meta: "欧内斯特·海明威 · 1926 · 长篇小说",
+          note: "迷惘一代的巴黎与西班牙，读完会想去塞纳河边走。"
+        },
+        {
+          title: "《了不起的盖茨比》",
+          meta: "F.S. 菲茨杰拉德 · 1925 · 长篇小说",
+          note: "左岸的另一位邻居，爵士时代的幻灭。"
+        }
+      ],
+      place: {
+        name: "莎士比亚书店",
+        address: "37 Rue de la Bûcherie, 75005 Paris",
+        note: "现址在圣母院对岸；老店原在 12 Rue de l'Odéon。二楼有阅读角，买书可盖章。"
+      },
+      route: {
+        title: "拉丁区—圣日耳曼 · 半日",
+        duration: "约 4 小时 · 4 km",
+        stops: [
+          { time: "10:00", name: "莎士比亚书店", note: "先逛书店，再沿塞纳河走。" },
+          { time: "11:00", name: "圣母院 & 塞纳河旧书摊", note: "bouquinistes 的绿箱子，是左岸的旧书记忆。" },
+          { time: "12:30", name: "拉丁区小巷", note: "找一家学生餐馆吃午饭。" },
+          { time: "14:00", name: "花神咖啡馆 / 双叟咖啡馆", note: "点一杯咖啡，坐室外看人。" },
+          { time: "15:30", name: "卢森堡公园", note: "海明威常去散步的地方，收尾。" }
+        ],
+        note: "花神与双叟价格偏高、室外座位更贵；预算有限就换街角普通咖啡馆。"
+      }
+    }
   },
   D: {
     name: "中国西北 · 平凡的土地",
@@ -132,7 +239,42 @@ const RESULTS = {
     paragraphs: [
       "你不爱煽情，你只认真实。你的朝圣是脚踩在土上、看见那些被时代碾过却还在走的人。",
       "去西北吧，走一走路遥写过的那些路，你会明白：最深的文学不在书里，在人间。"
-    ]
+    ],
+    guide: {
+      books: [
+        {
+          title: "《平凡的世界》",
+          meta: "路遥 · 1986 · 长篇小说",
+          note: "孙少安、孙少平兄弟，在黄土高原上挣生活。"
+        },
+        {
+          title: "《人生》",
+          meta: "路遥 · 1982 · 中篇小说",
+          note: "高加林的选择，比《平凡的世界》更短、更狠。"
+        },
+        {
+          title: "《早晨从中午开始》",
+          meta: "路遥 · 1992 · 创作随笔",
+          note: "看他怎么把《平凡的世界》写进自己的命里。"
+        }
+      ],
+      place: {
+        name: "延安大学路遥文学馆",
+        address: "延安市宝塔区 · 延安大学",
+        note: "馆内有手稿、书信与各版本作品；文汇山上有路遥墓，校园后山很安静。"
+      },
+      route: {
+        title: "延安城内 · 半日",
+        duration: "约 4 小时 · 步行 + 短途车",
+        stops: [
+          { time: "09:00", name: "延安大学路遥文学馆", note: "先看手稿与创作年表。" },
+          { time: "10:30", name: "文汇山路遥墓", note: "带一束花，安静待一会儿。" },
+          { time: "12:00", name: "延河边走走", note: "《平凡的世界》里的城市与河，今天仍在。" },
+          { time: "13:30", name: "老城吃一碗羊肉面", note: "陕北的日常，比景点更接近路遥。" }
+        ],
+        note: "若多留一天，去延川县郭家沟村和清涧县王家堡村路遥故居；车程较远，建议包车。"
+      }
+    }
   },
   E: {
     name: "牛津 · 中土起点",
@@ -145,7 +287,43 @@ const RESULTS = {
     paragraphs: [
       "你脑子里住着一整个宇宙。你的朝圣地点“不存在”——但你知道它应该在哪里。",
       "去牛津吧，托尔金在那里造出了中土。你会站在某条街上突然觉得：雾后面有东西。"
-    ]
+    ],
+    guide: {
+      books: [
+        {
+          title: "《霍比特人》",
+          meta: "J.R.R. 托尔金 · 1937 · 长篇小说",
+          note: "中土的入口，从比尔博的冒险开始。"
+        },
+        {
+          title: "《魔戒》",
+          meta: "J.R.R. 托尔金 · 1954–55 · 三部曲",
+          note: "读不完就先看第一部《护戒使者》。"
+        },
+        {
+          title: "《精灵宝钻》",
+          meta: "J.R.R. 托尔金 · 1977 · 神话集",
+          note: "中土的神话底层，像牛津的雾一样厚。"
+        }
+      ],
+      place: {
+        name: "博德利图书馆",
+        address: "Broad St, Oxford OX1 3BG",
+        note: "托尔金在牛津任教时常来这里；Divinity School 的拱顶值得进去看，导览需提前预约。"
+      },
+      route: {
+        title: "牛津大学 · 半日步行",
+        duration: "约 4 小时 · 4 km",
+        stops: [
+          { time: "10:00", name: "博德利图书馆 & Divinity School", note: "提前预约导览，看汉弗莱公爵图书馆。" },
+          { time: "11:30", name: "默顿学院", note: "托尔金在此任教；庭院安静，先查开放时间。" },
+          { time: "12:30", name: "埃克塞特学院", note: "托尔金读本科的学院，门口看一眼也好。" },
+          { time: "14:00", name: "基督堂草地 / 莫德林塔", note: "沿河散步，感受《魔戒》里的绿意。" },
+          { time: "15:30", name: "伍尔弗科特墓园", note: "托尔金与妻子 Edith 的墓，墓碑上写着 Beren 与 Lúthien。" }
+        ],
+        note: "学院常因考试或活动关闭，出发前查官网；墓园在城北，步行约 25 分钟。"
+      }
+    }
   }
 };
 
@@ -175,6 +353,7 @@ const els = {
   resultCoords: document.getElementById("resultCoords"),
   resultCopy: document.getElementById("resultCopy"),
   breakdown: document.getElementById("breakdown"),
+  guide: document.getElementById("guide"),
   tieNote: document.getElementById("tieNote"),
   poster: document.getElementById("poster"),
   posterModal: document.getElementById("posterModal"),
@@ -383,6 +562,136 @@ function renderBreakdown(counts, letter) {
   });
 }
 
+const PIN_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 5.2-8 12-8 12S4 15.2 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.6"/></svg>';
+
+function renderGuide(guide) {
+  els.guide.innerHTML = "";
+  if (!guide) return;
+
+  const head = document.createElement("header");
+  head.className = "guide-head";
+  const headText = document.createElement("div");
+  const kicker = document.createElement("p");
+  kicker.className = "guide-kicker";
+  kicker.textContent = "Field Notes";
+  const title = document.createElement("h3");
+  title.className = "guide-title";
+  title.textContent = "朝圣手册";
+  headText.append(kicker, title);
+  const meta = document.createElement("span");
+  meta.className = "guide-meta";
+  meta.textContent = "3 本书 · 1 个地点 · 半日路线";
+  head.append(headText, meta);
+  els.guide.appendChild(head);
+
+  const books = document.createElement("div");
+  books.className = "books";
+  guide.books.forEach((book, i) => {
+    const article = document.createElement("article");
+    article.className = "book";
+
+    const index = document.createElement("span");
+    index.className = "book-index";
+    index.textContent = String(i + 1).padStart(2, "0");
+
+    const bookTitle = document.createElement("h4");
+    bookTitle.className = "book-title";
+    bookTitle.textContent = book.title;
+
+    const bookMeta = document.createElement("p");
+    bookMeta.className = "book-meta";
+    bookMeta.textContent = book.meta;
+
+    const bookNote = document.createElement("p");
+    bookNote.className = "book-note";
+    bookNote.textContent = book.note;
+
+    article.append(index, bookTitle, bookMeta, bookNote);
+    books.appendChild(article);
+  });
+  els.guide.appendChild(books);
+
+  const spot = document.createElement("div");
+  spot.className = "spot";
+  const pin = document.createElement("span");
+  pin.className = "spot-pin";
+  pin.innerHTML = PIN_ICON;
+  const spotBody = document.createElement("div");
+  spotBody.className = "spot-body";
+
+  const spotLabel = document.createElement("p");
+  spotLabel.className = "spot-label";
+  spotLabel.textContent = "具体地点";
+  const spotName = document.createElement("h4");
+  spotName.className = "spot-name";
+  spotName.textContent = guide.place.name;
+  const spotAddress = document.createElement("p");
+  spotAddress.className = "spot-address";
+  spotAddress.textContent = guide.place.address;
+  const spotNote = document.createElement("p");
+  spotNote.className = "spot-note";
+  spotNote.textContent = guide.place.note;
+
+  spotBody.append(spotLabel, spotName, spotAddress, spotNote);
+  spot.append(pin, spotBody);
+  els.guide.appendChild(spot);
+
+  const route = document.createElement("div");
+  route.className = "route";
+
+  const routeHead = document.createElement("div");
+  routeHead.className = "route-head";
+  const routeHeadText = document.createElement("div");
+  const routeKicker = document.createElement("p");
+  routeKicker.className = "route-kicker";
+  routeKicker.textContent = "Half-day Route";
+  const routeTitle = document.createElement("h4");
+  routeTitle.className = "route-title";
+  routeTitle.textContent = guide.route.title;
+  routeHeadText.append(routeKicker, routeTitle);
+
+  const routeDuration = document.createElement("span");
+  routeDuration.className = "route-duration";
+  routeDuration.textContent = guide.route.duration;
+  routeHead.append(routeHeadText, routeDuration);
+  route.appendChild(routeHead);
+
+  const stops = document.createElement("ol");
+  stops.className = "stops";
+  guide.route.stops.forEach((stop) => {
+    const item = document.createElement("li");
+    item.className = "stop";
+
+    const dot = document.createElement("span");
+    dot.className = "stop-dot";
+    dot.setAttribute("aria-hidden", "true");
+
+    const time = document.createElement("span");
+    time.className = "stop-time";
+    time.textContent = stop.time;
+
+    const body = document.createElement("div");
+    body.className = "stop-body";
+    const stopName = document.createElement("strong");
+    stopName.textContent = stop.name;
+    const stopNote = document.createElement("p");
+    stopNote.textContent = stop.note;
+    body.append(stopName, stopNote);
+
+    item.append(dot, time, body);
+    stops.appendChild(item);
+  });
+  route.appendChild(stops);
+
+  const routeNote = document.createElement("p");
+  routeNote.className = "route-note";
+  routeNote.textContent = guide.route.note;
+  route.appendChild(routeNote);
+
+  els.guide.appendChild(route);
+}
+
 function showResult(options = {}) {
   const { letter, tie, counts } = computeResult();
   const result = RESULTS[letter];
@@ -403,6 +712,7 @@ function showResult(options = {}) {
   els.tieNote.hidden = !tie;
 
   renderBreakdown(counts, letter);
+  renderGuide(result.guide);
   showScreen("result");
 
   if (!options.skipHash) updateHash();
@@ -911,6 +1221,14 @@ function initFromLocation() {
   }
   refreshResumeButton();
 }
+
+window.addEventListener("hashchange", () => {
+  const hashAnswers = readHash();
+  if (!hashAnswers) return;
+  answers = hashAnswers;
+  index = QUESTIONS.length - 1;
+  showResult({ skipHash: true });
+});
 
 const cursorGlow = document.getElementById("cursorGlow");
 let pointerX = 0;
